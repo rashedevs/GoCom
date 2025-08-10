@@ -14,36 +14,25 @@ type Product struct{
 	ImgURL string         `json:"imageUrl"`
 }
 
-// var a int8 = 10
-// var b int = 5
-
-
 var productList []Product
 
 func handler(w http.ResponseWriter, r *http.Request){
 	fmt.Fprintln(w, "Hello.! from go server")
 }
 
-func getProducts(w http.ResponseWriter, r  *http.Request){
+func getProducts(w http.ResponseWriter, r  *http.Request){  // GET and OPTIONS
 	handleCors(w)
-    handlePreflightRequest(w, r)
-
-	if r.Method != http.MethodGet {
-		http.Error(w, "Please make a GET request.", 400)
+	if r.Method == http.MethodOptions{
+    	w.WriteHeader(200)
 		return
 	}
-
 	sendData(w, productList, 200)
-    // encoder := json.NewEncoder(w)
-	// encoder.Encode(productList)
 }
 
-func createProduct(w http.ResponseWriter, r *http.Request){
+func createProduct(w http.ResponseWriter, r *http.Request){  // POST and OPTIONS
 	handleCors(w)
-    handlePreflightRequest(w, r)
-
-	if r.Method != http.MethodPost {
-		http.Error(w, "Please make a POST request.", 400)
+	if r.Method == http.MethodOptions{
+    	w.WriteHeader(200)
 		return
 	}
 
@@ -86,11 +75,16 @@ func main(){
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", handler)
+	mux.Handle("GET /home", http.HandlerFunc(handler))
 
-	mux.HandleFunc("/products", getProducts)
+	// mux.Handle("GET /products", http.HandlerFunc(getProducts))
+	mux.Handle("GET /products", corsMiddleware(http.HandlerFunc(getProducts)))
 
-	mux.HandleFunc("/create-products", createProduct)
+	mux.Handle("OPTIONS /products", http.HandlerFunc(getProducts))
+
+	mux.Handle("POST /create-products", http.HandlerFunc(createProduct))
+
+	mux.Handle("OPTIONS /create-products", http.HandlerFunc(createProduct))
 
 	fmt.Println("Server is running on port :8080")
 
@@ -145,3 +139,31 @@ func init(){
 	productList = append(productList, prd4)
 	productList = append(productList, prd5)
 }
+
+func corsMiddleware(next http.Handler) http.Handler{
+	handleCors := func(w http.ResponseWriter, r *http.Request){
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Habib")
+		w.Header().Set("Content-Type", "application/json")
+
+		next.ServeHTTP(w, r)
+		// getProducts()
+	}
+	handler := http.HandlerFunc(handleCors)
+	return handler
+}
+
+// func handleCors(w http.ResponseWriter){
+// 	w.Header().Set("Access-Control-Allow-Origin", "*")
+// 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+// 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Habib")
+// 	w.Header().Set("Content-Type", "application/json")
+// }
+
+/*
+### JSON : javascript object notation.
+
+	[] -> List
+	{} -> Object
+*/
