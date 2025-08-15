@@ -11,7 +11,7 @@ import (
 func Serve(){
 	mux := http.NewServeMux()
 
-	mux.Handle("GET /route", middleware.Logger(http.HandlerFunc(http.HandlerFunc(handlers.Test))))
+	mux.Handle("GET /route", middleware.Hudai(middleware.Logger(http.HandlerFunc(http.HandlerFunc(handlers.Test)))))
 
 	mux.Handle("GET /products", middleware.Logger(http.HandlerFunc(handlers.GetProducts)))
 	mux.Handle("GET /products/{productId}", middleware.Logger(http.HandlerFunc(handlers.GetProductByID)))
