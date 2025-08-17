@@ -9,14 +9,6 @@ func main(){
 
 
 
-
-
-
-
-
-
-
-
 /*
 ### JSON : javascript object notation.
 	[] -> List
