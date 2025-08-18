@@ -11,6 +11,15 @@ import (
 func Serve(){
 	mux := http.NewServeMux()
 
+	manager := middleware.NewManager()
+	// m := manager.With(middleware.Hudai, middleware.Logger)
+	// h := m(http.HandlerFunc(handlers.Test))
+
+	mux.Handle("GET /rashed", manager.With(
+		middleware.Hudai,
+		middleware.Logger,
+	)(http.HandlerFunc(handlers.Test)))
+
 	mux.Handle("GET /route", middleware.Hudai(middleware.Logger(http.HandlerFunc(http.HandlerFunc(handlers.Test)))))
 
 	mux.Handle("GET /products", middleware.Logger(http.HandlerFunc(handlers.GetProducts)))
