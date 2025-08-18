@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"gocom/handlers"
 	"gocom/middleware"
 	"gocom/util"
 	"net/http"
@@ -10,21 +9,10 @@ import (
 
 func Serve(){
 	mux := http.NewServeMux()
-
 	manager := middleware.NewManager()
-	// m := manager.With(middleware.Hudai, middleware.Logger)
-	// h := m(http.HandlerFunc(handlers.Test))
+	manager.Use(middleware.Logger, middleware.Hudai)
 
-	mux.Handle("GET /rashed", manager.With(
-		middleware.Hudai,
-		middleware.Logger,
-	)(http.HandlerFunc(handlers.Test)))
-
-	mux.Handle("GET /route", middleware.Hudai(middleware.Logger(http.HandlerFunc(http.HandlerFunc(handlers.Test)))))
-
-	mux.Handle("GET /products", middleware.Logger(http.HandlerFunc(handlers.GetProducts)))
-	mux.Handle("GET /products/{productId}", middleware.Logger(http.HandlerFunc(handlers.GetProductByID)))
-	mux.Handle("POST /products", middleware.Logger(http.HandlerFunc(handlers.CreateProduct)))
+	initRoutes(mux, manager)
 
 	globalRouter := util.GlobalRouter(mux)
 	fmt.Println("Server is running on port :8080")

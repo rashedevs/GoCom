@@ -16,14 +16,20 @@ func NewManager () *Manager{
 	}
 }
 
-func (mnger *Manager) With(middlewares ...Middleware) Middleware{
-	return func(next http.Handler) http.Handler{
+//this is called builder pattern
+func (mngr *Manager) Use(middlewares ...Middleware) {
+	mngr.globalMiddlewares = append(mngr.globalMiddlewares, middlewares...)
+}
+
+func (mnger *Manager) With(next http.Handler, middlewares ...Middleware) http.Handler{
 		n := next
-		for i := len(middlewares)-1; i>=0 ; i-- {
-			middleware := middlewares[i]
-			middleware(n)
+		for _, middleware := range middlewares{
+			n = middleware(n)
+		}
+
+		for _, globalMiddleware := range mnger.globalMiddlewares{
+			n = globalMiddleware(n)
 		}
 		return  n
-	}
 }
 
