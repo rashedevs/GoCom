@@ -6,10 +6,10 @@ import (
 	"time"
 )
 
-func Logger(next http.Handler) http.Handler{
-	return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request){
+func Logger(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
-		log.Println("ami logger middleware")
+		// log.Println("ami logger middleware")
 
 		next.ServeHTTP(w, r)
 
