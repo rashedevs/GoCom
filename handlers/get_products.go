@@ -7,8 +7,7 @@ import (
 	"net/http"
 )
 
-func GetProducts(w http.ResponseWriter, r  *http.Request){  // GET and OPTIONS
-	log.Println("ami getproducts handler called from logger")
+func GetProducts(w http.ResponseWriter, r *http.Request) { // GET and OPTIONS
+	log.Println("ami getproducts handler")
 	util.SendData(w, database.ProductList, 200)
 }
-
