@@ -2,11 +2,15 @@ package cmd
 
 import (
 	"fmt"
+	"gocom/config"
 	"gocom/middleware"
 	"net/http"
+	"os"
+	"strconv"
 )
 
 func Serve() {
+	cnf := config.GetConfigs()
 	manager := middleware.NewManager()
 
 	manager.Use(
@@ -19,10 +23,12 @@ func Serve() {
 	wrappedMux := manager.WrapMux(mux)
 	initRoutes(mux, manager)
 
-	fmt.Println("Server is running on port :8080")
+	addr := ":" + strconv.Itoa(cnf.HttpPort) // type casting (int to string)
+	fmt.Println("Server is running on port", addr)
 
-	err := http.ListenAndServe(":8080", wrappedMux)
+	err := http.ListenAndServe(addr, wrappedMux)
 	if err != nil {
 		fmt.Println("Error starting the server", err)
+		os.Exit(1)
 	}
 }

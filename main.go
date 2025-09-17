@@ -1,13 +1,12 @@
 package main
 
-import "gocom/cmd"
+import (
+	"gocom/cmd"
+)
 
-
-func main(){ 
+func main() {
 	cmd.Serve()
 }
-
-
 
 /*
 ### JSON : javascript object notation.
