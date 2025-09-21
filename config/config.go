@@ -50,7 +50,7 @@ func loadConfig() {
 	configurations = Config{
 		Version:     version,
 		ServiceName: serviceName,
-		HttpPort:    int(port), // type casting two types big to sm/ sm to big...
+		HttpPort:    int(port), // type casting -- two types big to sm / sm to big...
 	}
 }
 
