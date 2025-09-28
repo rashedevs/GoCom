@@ -14,6 +14,7 @@ type Config struct {
 	Version     string
 	ServiceName string
 	HttpPort    int
+	SecretKey   string
 }
 
 func loadConfig() {
@@ -46,11 +47,17 @@ func loadConfig() {
 		fmt.Println("Failed to parse the http port")
 		os.Exit(1)
 	}
+	secret := os.Getenv("SECRET_KEY")
+	if secret == "" {
+		fmt.Println("Secret key is required")
+		os.Exit(1)
+	}
 
 	configurations = Config{
 		Version:     version,
 		ServiceName: serviceName,
 		HttpPort:    int(port), // type casting -- two types big to sm / sm to big...
+		SecretKey:   secret,
 	}
 }
 
