@@ -1,4 +1,4 @@
-package handlers
+package product
 
 import (
 	"gocom/database"
@@ -8,7 +8,7 @@ import (
 )
 
 // http://localhost:8080/products/5  ---> 5 is called as request "path parameter"
-func GetProduct(w http.ResponseWriter, r *http.Request) { // GET and OPTIONS
+func (h *Handler) GetProduct(w http.ResponseWriter, r *http.Request) { // GET and OPTIONS
 	productID := r.PathValue("id")
 	pId, err := strconv.Atoi(productID)
 	if err != nil {

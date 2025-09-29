@@ -1,4 +1,4 @@
-package handlers
+package product
 
 import (
 	"gocom/database"
@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func GetProducts(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetProducts(w http.ResponseWriter, r *http.Request) {
 	log.Println("ami getproducts handler")
 	util.SendData(w, database.List(), 200)
 }
