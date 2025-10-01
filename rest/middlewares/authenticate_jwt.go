@@ -4,13 +4,12 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
-	"gocom/config"
 	"log"
 	"net/http"
 	"strings"
 )
 
-func AuthenticateJWT(next http.Handler) http.Handler {
+func (m *Middlewares) AuthenticateJWT(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		header := r.Header.Get("Authorization")
 		if header == "" {
@@ -34,8 +33,8 @@ func AuthenticateJWT(next http.Handler) http.Handler {
 		signature := tokenParts[2]
 
 		message := jwtHeader + "." + jwtPayload
-		cnf := config.GetConfigs()
-		byteArrSecret := []byte(cnf.SecretKey)
+
+		byteArrSecret := []byte(m.cnf.SecretKey)
 		byteArrMessage := []byte(message)
 
 		//HMAC - hash based message authentication code
