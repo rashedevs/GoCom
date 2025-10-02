@@ -3,29 +3,47 @@ package product
 import (
 	"encoding/json"
 	"fmt"
-	"gocom/database"
+	"gocom/repo"
 	"gocom/util"
 	"net/http"
 	"strconv"
 )
 
+type ReqUpdateProduct struct {
+	Title       string  `json:"title"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
+	ImgURL      string  `json:"imageUrl"`
+}
+
 func (h *Handler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	productID := r.PathValue("id")
 	pId, err := strconv.Atoi(productID)
 	if err != nil {
-		http.Error(w, "Please give me a valid product ID", 400)
+		util.SendError(w, http.StatusBadRequest, "Invalid Product ID")
 		return
 	}
 
-	var newProduct database.Product
+	var req ReqUpdateProduct
 	decoder := json.NewDecoder(r.Body)
-	err = decoder.Decode(&newProduct)
+	err = decoder.Decode(&req)
 	if err != nil {
 		fmt.Println(err)
-		http.Error(w, "Please send a valid json body", 400)
+		util.SendError(w, http.StatusBadRequest, "Invalid Request Body")
 		return
 	}
-	newProduct.ID = pId
-	database.Update(newProduct)
-	util.SendData(w, "Successfully updated product", 200)
+
+	_, err = h.productRepo.Update(repo.Product{
+		ID:          pId,
+		Title:       req.Title,
+		Description: req.Description,
+		Price:       req.Price,
+		ImgURL:      req.ImgURL,
+	})
+	if err != nil {
+		fmt.Println(err)
+		util.SendError(w, http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
+	util.SendData(w, http.StatusOK, "Successfully updated product")
 }

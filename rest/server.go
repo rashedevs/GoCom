@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"gocom/config"
 	"gocom/rest/handlers/product"
-	"gocom/rest/handlers/review"
 	"gocom/rest/handlers/user"
 	middleware "gocom/rest/middlewares"
 	"net/http"
@@ -16,20 +15,17 @@ type Server struct {
 	cnf            *config.Config
 	userHandler    *user.Handler
 	productHandler *product.Handler
-	reviewHandler  *review.Handler
 }
 
 func NewServer(
 	cnf *config.Config,
 	userHandler *user.Handler,
 	productHandler *product.Handler,
-	reviewHandler *review.Handler,
 ) *Server {
 	return &Server{
 		cnf:            cnf,
 		userHandler:    userHandler,
 		productHandler: productHandler,
-		reviewHandler:  reviewHandler,
 	}
 }
 
@@ -48,7 +44,6 @@ func (server *Server) Start() {
 	// initRoutes(mux, manager)
 	server.userHandler.RegisterRoutes(mux, manager)
 	server.productHandler.RegisterRoutes(mux, manager)
-	server.reviewHandler.RegisterRoutes(mux, manager)
 
 	addr := ":" + strconv.Itoa(server.cnf.HttpPort) // type casting (int to string)
 	fmt.Println("Server is running on port", addr)
