@@ -13,6 +13,7 @@ type LoginReq struct {
 }
 
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
+
 	var req LoginReq
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&req)
@@ -28,10 +29,15 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if usr == nil {
+		util.SendError(w, http.StatusUnauthorized, "Invalid email or password")
+		return
+	}
+
 	accessToken, err := util.CreateJwt(h.cnf.SecretKey, util.Payload{
 		Sub:         usr.ID,
 		FirstName:   usr.FirstName,
-		LastName:    usr.LirstName,
+		LastName:    usr.LastName,
 		Email:       usr.Email,
 		IsShopOwner: usr.IsShopOwner,
 	})
