@@ -2,22 +2,24 @@ package db
 
 import (
 	"fmt"
+	"gocom/config"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
-func GetConnectionString() string {
-	// user -> postgres
-	// password -> redass
-	// host -> localhost
-	// port -> 5432
-	// db name -> gocom
-	return "user=postgres password=redass host=localhost port=5432 dbname=gocom sslmode=disable"
+func GetConnectionString(cnf *config.DBConfig) string {
+	connString := fmt.Sprintf("user=%s password=%s host=%s port=%d dbname=%s",
+		cnf.User, cnf.Password, cnf.Host, cnf.Port, cnf.Name,
+	)
+	if !cnf.EnableSSLMode {
+		connString += "sslmode=disable"
+	}
+	return connString
 }
 
-func NewConnection() (*sqlx.DB, error) {
-	dbSource := GetConnectionString()
+func NewConnection(cnf *config.DBConfig) (*sqlx.DB, error) {
+	dbSource := GetConnectionString(cnf)
 	dbCon, error := sqlx.Connect("postgres", dbSource)
 	if error != nil {
 		fmt.Println(error)

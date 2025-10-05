@@ -14,14 +14,15 @@ import (
 
 func Serve() {
 	cnf := config.GetConfigs()
-	dbCon, err := db.NewConnection()
+	// fmt.Printf("%+v", cnf.DB)
+	dbCon, err := db.NewConnection(cnf.DB)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
 	userRepo := repo.NewUserRepo(dbCon)
-	productRepo := repo.NewProductRepo()
+	productRepo := repo.NewProductRepo(dbCon)
 
 	middlewares := middleware.NewMiddlewares(cnf)
 
