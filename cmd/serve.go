@@ -6,9 +6,10 @@ import (
 	"gocom/infra/db"
 	"gocom/repo"
 	"gocom/rest"
-	"gocom/rest/handlers/product"
-	"gocom/rest/handlers/user"
+	prdctHandler "gocom/rest/handlers/product"
+	usrHandler "gocom/rest/handlers/user"
 	middleware "gocom/rest/middlewares"
+	"gocom/user"
 	"os"
 )
 
@@ -27,13 +28,17 @@ func Serve() {
 		os.Exit(1)
 	}
 
+	//repos
 	userRepo := repo.NewUserRepo(dbCon)
 	productRepo := repo.NewProductRepo(dbCon)
 
+	//domains
+	usrSvc := user.NewService(userRepo)
+
 	middlewares := middleware.NewMiddlewares(cnf)
 
-	userHandler := user.NewHandler(cnf, userRepo)
-	productHandler := product.NewHandler(middlewares, productRepo)
+	userHandler := usrHandler.NewHandler(cnf, usrSvc)
+	productHandler := prdctHandler.NewHandler(middlewares, productRepo)
 
 	server := rest.NewServer(cnf, userHandler, productHandler)
 	server.Start()
