@@ -1,0 +1,6 @@
+For migration in go, we need two packages.
+
+    1. go get -v github.com/rubenv/sql-migrate/...
+    2.
+
+famous 1 -- go get github.com/golang-migrate/migrate/v4
