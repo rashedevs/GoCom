@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"gocom/repo"
+	"gocom/domain"
 	"gocom/util"
 	"net/http"
 )
@@ -25,7 +25,7 @@ func (h *Handler) CreateProduct(w http.ResponseWriter, r *http.Request) { // POS
 		http.Error(w, "Please send a valid json body", 400)
 		return
 	}
-	createdProduct, err := h.productRepo.Create(repo.Product{
+	createdProduct, err := h.svc.Create(domain.Product{
 		Title:       req.Title,
 		Description: req.Description,
 		Price:       req.Price,

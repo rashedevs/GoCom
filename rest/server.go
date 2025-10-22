@@ -41,7 +41,6 @@ func (server *Server) Start() {
 	mux := http.NewServeMux()
 	wrappedMux := manager.WrapMux(mux)
 
-	// initRoutes(mux, manager)
 	server.userHandler.RegisterRoutes(mux, manager)
 	server.productHandler.RegisterRoutes(mux, manager)
 

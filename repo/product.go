@@ -3,24 +3,14 @@ package repo
 import (
 	"database/sql"
 	"fmt"
+	"gocom/domain"
+	"gocom/product"
 
 	"github.com/jmoiron/sqlx"
 )
 
-type Product struct {
-	ID          int     `json:"id" db:"id"` //add tag
-	Title       string  `json:"title" db:"title"`
-	Description string  `json:"description" db:"description"`
-	Price       float64 `json:"price" db:"price"`
-	ImgURL      string  `json:"image_url" db:"img_url"`
-}
-
 type ProductRepo interface {
-	Create(p Product) (*Product, error)
-	Get(pId int) (*Product, error)
-	List() ([]*Product, error)
-	Update(p Product) (*Product, error)
-	Delete(pId int) error
+	product.ProductRepo
 }
 
 type productRepo struct {
@@ -34,7 +24,7 @@ func NewProductRepo(db *sqlx.DB) ProductRepo {
 	}
 }
 
-func (r productRepo) Create(p Product) (*Product, error) {
+func (r productRepo) Create(p domain.Product) (*domain.Product, error) {
 	query := `
 		INSERT INTO products (title, description, price, img_url) 
 		VALUES ($1, $2, $3, $4) RETURNING id
@@ -47,8 +37,8 @@ func (r productRepo) Create(p Product) (*Product, error) {
 	return &p, nil
 }
 
-func (r productRepo) Get(id int) (*Product, error) {
-	var product Product
+func (r productRepo) Get(id int) (*domain.Product, error) {
+	var product domain.Product
 	query := `
 		SELECT id, title, description, price, img_url FROM products WHERE id = $1
 	`
@@ -62,8 +52,8 @@ func (r productRepo) Get(id int) (*Product, error) {
 	return &product, nil
 }
 
-func (r productRepo) List() ([]*Product, error) {
-	var products []*Product
+func (r productRepo) List() ([]*domain.Product, error) {
+	var products []*domain.Product
 	query := `
 		SELECT id, title, description, price, img_url FROM products
 	`
@@ -75,7 +65,7 @@ func (r productRepo) List() ([]*Product, error) {
 	return products, nil
 }
 
-func (r productRepo) Update(p Product) (*Product, error) {
+func (r productRepo) Update(p domain.Product) (*domain.Product, error) {
 	query := `UPDATE products SET title=$1, description=$2, price=$3, img_url=$4 WHERE id=$5`
 	row := r.db.QueryRow(query, p.Title, p.Description, p.Price, p.ImgURL, p.ID)
 	err := row.Err()

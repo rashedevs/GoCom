@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gocom/config"
 	"gocom/infra/db"
+	"gocom/product"
 	"gocom/repo"
 	"gocom/rest"
 	prdctHandler "gocom/rest/handlers/product"
@@ -34,11 +35,13 @@ func Serve() {
 
 	//domains
 	usrSvc := user.NewService(userRepo)
+	prdctSvc := product.NewService(productRepo)
 
 	middlewares := middleware.NewMiddlewares(cnf)
 
+	//handlers
 	userHandler := usrHandler.NewHandler(cnf, usrSvc)
-	productHandler := prdctHandler.NewHandler(middlewares, productRepo)
+	productHandler := prdctHandler.NewHandler(middlewares, prdctSvc)
 
 	server := rest.NewServer(cnf, userHandler, productHandler)
 	server.Start()
