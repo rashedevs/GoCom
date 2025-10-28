@@ -71,6 +71,10 @@ func (r productRepo) Count() (int64, error) {
 	query := `
 		SELECT COUNT(*) FROM products
 	`
+	// query := `
+	// 	SELECT COUNT(md5(title || description || price || img_url || random() :: text )) FROM products
+	// `
+
 	err := r.db.Get(&count, query)
 	if err != nil {
 		fmt.Println("Inside count method err", err)
